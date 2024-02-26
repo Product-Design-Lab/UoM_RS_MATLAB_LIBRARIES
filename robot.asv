@@ -1,0 +1,64 @@
+classdef robot
+    %UNTITLED2 Summary of this class goes here
+    %   Detailed explanation goes here
+    
+    properties
+        control_mode
+        q_ref
+        q_dot_ref
+        q_FB
+        ID
+        
+        connected_ID
+        num_ID
+        serial_obj
+        serial_port
+        serial_baudrate
+        
+    end
+
+    methods
+        function obj = robot(MAX_ID, port,BAUDRATE)
+            %Robot Construct an instance of this class
+            %   Detailed explanation goes here
+            obj.control_mode = zeros(1,MAX_ID, 'logical');
+            obj.q_ref = zeros(1,MAX_ID, 'double');
+            obj.q_dot_ref = zeros(1,MAX_ID, 'double');
+            obj.q_FB = zeros(1,MAX_ID, 'double');
+            obj.serial_obj = establishSerial(port,BAUDRATE);
+
+            for i=1:MAX_ID
+                obj.ID(i) = i;
+%                 obj.connected_ID(i) = 255;
+            end
+
+
+        end
+
+        function obj = setSerialParams(obj, port, baudrate)
+            obj.serial_port = port;
+            obj.serial_baudrate = baudrate;
+        end
+
+        function obj = ConnectToArduino(obj)
+            %METHOD1 Summary of this method goes here
+            %   Detailed explanation goes here
+            obj.serial_obj = establishSerial(obj.serial_port, obj.serial_baudrate);
+
+        end
+        
+        function obj.connected_ID = getID(obj)
+            [obj.num_ID, obj.connected_ID] = getMotorIDs(obj.serial_obj);
+
+            obj.num_ID
+            obj.connected_ID
+        end
+        
+        function obj = getFB(obj)
+            obj.q_FB = readFB(obj.serial_obj, MAX_ID);
+
+        end
+
+
+    end
+end

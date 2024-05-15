@@ -74,6 +74,12 @@ classdef robot < handle
             obj.q_FB = readFB(obj.serial_obj, obj.max_id);
 
         end
+
+        function obj = setDigitalPin(obj, pin_state)
+            % getFB Request motor feedback from Arduino
+            setDigitalIO(obj.serial_obj, pin_state)
+
+        end
         
         function obj = driveMotors(obj)
             % driveMotors Send reference pos/vel to Arduino

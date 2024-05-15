@@ -15,7 +15,7 @@
 % (nathan@productdesignlab.com.au)
 
 
-function [fb, e] = setDigitalIO(s, state)
+function setDigitalIO(s, state)
 
     % Read motor position by sending a position read command to the
     % Arduino and then calling the readSerial() function to receive

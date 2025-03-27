@@ -62,5 +62,11 @@ function [data, e] = readSerial(s, numElements)
         data(i) = str2double(strcat(q_fb_tmp(:)));
     
     end
+    
+    % Clear buffer at end of read
+    Bytes = s.NumBytesAvailable;
+    if Bytes > 0
+        flush(s);
+    end
 
 end

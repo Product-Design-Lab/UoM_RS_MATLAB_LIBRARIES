@@ -30,13 +30,21 @@ function [fb, e] = readFB(s, numMotors)
     
     % Send position read command to Arduino
     writeline(s,'FBK');
-    writeline(s,'FBK');
+%     writeline(s,'FBK');
     
     % Convert encoder counts into radians
     SMS_2_RAD = (2*pi)/4096;
     
     % Read motor feedback in SCS format
     [fb, e] = readSerial(s, numMotors);
+
+    if e
+        writeline(s,'FBK');
+        [fb, e] = readSerial(s, numMotors);
+        if e ~= ERROR
+            "Error Handled"
+        end
+    end
     
     % Convert from SCS to rad
     for i = 1:numMotors

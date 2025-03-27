@@ -29,7 +29,7 @@ function sendMotorCommand(s, value, numMotors)
     
     % Send drive motor command
     writeline(s,'DRV');
-    writeline(s,'DRV');
+%     writeline(s,'DRV');
 
     % Send joint velocities individually
     for i=1:numMotors

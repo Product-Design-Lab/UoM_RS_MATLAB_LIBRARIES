@@ -16,7 +16,7 @@
 
 
 
-function [data, e] = readSerial(s, numElements, flush_flag)
+function [data, e] = readSerial(s, numElements, flush)
     
     % Read data sent by Arduino over serial. This is done by checking 
     % how many characters are being sent and then reading the specified 
@@ -36,7 +36,7 @@ function [data, e] = readSerial(s, numElements, flush_flag)
     for i=1:numElements
         
         % Check number of chars are to be sent
-        dataTemp = read(s, 1, 'char');
+        dataTemp = read(s, 1, 'char')
         
         % Read appropriate number of chars
         if char(dataTemp) == '1'
@@ -64,8 +64,8 @@ function [data, e] = readSerial(s, numElements, flush_flag)
     end
     
     % Clear buffer at end of read
-    Bytes = s.NumBytesAvailable;
-    if Bytes > 0 && flush_flag
+    Bytes = s.NumBytesAvailable
+    if Bytes > 0 && flush
         flush(s);
     end
 

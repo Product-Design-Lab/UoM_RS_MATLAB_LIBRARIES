@@ -16,9 +16,9 @@
 function [numID, ID] = getMotorIDs(s)
    
     % Read number of connected motors
-    [numID, e] = readSerial(s, 1);
+    [numID, e] = readSerial(s, 1, false);
     
     % Read IDs of connected motors
-    [ID, e] = readSerial(s, numID);
-
+    [ID, e] = readSerial(s, numID, true);
+    
 end

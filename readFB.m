@@ -40,7 +40,7 @@ function [fb, e] = readFB(s, numMotors)
 
     if e
         writeline(s,'FBK');
-        [fb, e] = readSerial(s, numMotors);
+        [fb, e] = readSerial(s, numMotors, true);
         if e ~= ERROR
             "Error Handled"
         end

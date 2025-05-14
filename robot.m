@@ -33,6 +33,9 @@ classdef robot < handle
         serial_obj              % SerialPort object for communicating with Arduino
         serial_port             % The port identifier of the Arduino
         serial_baudrate         % The baudrate for communicating with the Arduino
+        offset                  % Offset to calibrate home position
+        joystick                % Joystick Input
+        joy_offset              % Joystick centre offset
         
     end
 
@@ -48,6 +51,9 @@ classdef robot < handle
             obj.q_FB = zeros(1,obj.max_id, 'double');
             obj.serial_port = port;
             obj.serial_baudrate = BAUDRATE;
+            obj.offset = zeros(1,obj.max_id, 'double');
+            obj.joystick = [0 0 0];
+            obj.joy_offset = [0 0];
 
             for i=1:obj.max_id
                 obj.ID(i) = i;
@@ -71,13 +77,55 @@ classdef robot < handle
         
         function obj = getFB(obj)
             % getFB Request motor feedback from Arduino
-            obj.q_FB = readFB(obj.serial_obj, obj.max_id);
+            obj.q_FB = readFB(obj.serial_obj, obj.max_id) - obj.offset;
+
+        end
+
+        function obj = getJOY(obj)
+            % getJOY Request joystick input from Arduino
+            obj.joystick = readJOY(obj.serial_obj);
+
+            % apply offset
+            obj.joystick(1:2) = obj.joystick(1:2) - obj.joy_offset;
+
+            
+            for i = 1:2 
+                
+                % Read Sign
+                tmp_sign = sign(obj.joystick(i));
+
+                % normalise
+                obj.joystick(i) = obj.joystick(i)/obj.joy_offset(i);
+                
+                % apply non-linear scaling
+                obj.joystick(i) = tmp_sign * (obj.joystick(i)^2);
+    
+            end
+
+            
+
+        end
+        
+        function obj = setJoyOffset(obj)
+                
+            tmp_jopy_os = readJOY(obj.serial_obj);
+            % getJOY Request joystick input from Arduino
+            obj.joy_offset(1) = tmp_jopy_os(1);
+            obj.joy_offset(2) = tmp_jopy_os(2);
 
         end
 
         function obj = setDigitalPin(obj, pin_state)
             % getFB Request motor feedback from Arduino
             setDigitalIO(obj.serial_obj, pin_state)
+
+        end
+
+        function obj = setOffset(obj, motor_offset)
+            % getFB Request motor feedback from Arduino
+            for i=1:length(motor_offset)
+                obj.offset(i) = motor_offset(i);
+            end
 
         end
         
@@ -103,9 +151,9 @@ classdef robot < handle
 
         function obj = setQ(obj, q)
             % setQ Set the internal reference position
-            for i = 1:length(q)
-                obj.q_ref(i) = q(i);
-            end
+             for i = 1:length(q)
+                 obj.q_ref(i) = q(i) + obj.offset(i);
+             end
         end
 
         function obj = setQDot(obj, q_dot)
